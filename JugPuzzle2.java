@@ -1,0 +1,130 @@
+package ca.utoronto.utm.assignment1.q2;
+import ca.utoronto.utm.assignment1.puzzle.Puzzle;
+import ca.utoronto.utm.assignment1.puzzle.States;
+
+
+/**
+ *
+ * @author Mohammad
+ *This class contains the main methods of the game that will allow it to function correctly.
+ * IS-A: inheritance 	(inheriting from the Puzzle class (found in the Puzzle package)).
+ * HAS-A: attributes 	(no attributes were make in this class).
+ * RESPONDS-TO: methods (getMoves, move, isPuzzleSolved, copy, nextStates and toString).
+ * CONSTRUCTORS: 		(no constructor needed for this class).
+ */
+public class JugPuzzle extends Puzzle{
+
+	/**
+	 * Create the 3 jugs used in the jug puzzle and assign each of them the correct jug number,
+	 * jug capacity and the initial amount of water in each jug.
+	 * Store all the jug objects in the storedJugs array.
+	 */
+	Jug firstJug =  new Jug (0,8, 8);
+	Jug secondJug =  new Jug (1,5, 0);
+	Jug thirdJug =  new Jug (2,3, 0);
+	Jug[] storedJugs = new Jug[] {firstJug,secondJug, thirdJug};
+
+
+	/**
+	 * Create the 6 MoveJugs objects which stores all 6 unique and valid moves that will be used to solve the jug puzzle.
+	 * Store all the MoveJugs objects in the allPossibleMoves array.
+	 */
+	MoveJugs firstMove = new MoveJugs(0,1);
+	MoveJugs secondMove = new MoveJugs(0,2);
+	MoveJugs thirdMove = new MoveJugs(1,0);
+	MoveJugs fourthMove = new MoveJugs(1,2);
+	MoveJugs fifthMove = new MoveJugs(2,0);
+	MoveJugs sixthMove = new MoveJugs(2,1);
+
+	MoveJugs[] allPossibleMoves = new MoveJugs[] {firstMove, secondMove , thirdMove, fourthMove, fifthMove, sixthMove};
+
+
+	int movesCounter = 0;
+	Puzzle tempPuzzle;
+
+
+	/**
+	 * Algorithm to solve the jug puzzle.
+	 * Loop through all possible moves that could be made to solve the jug puzzle.
+	 * For each possible move copy the current puzzle, make the move and finally add it to the array states.
+	 * @param  states	Array of all the puzzle's states.
+	 */
+	public void nextStates(States states){
+	      for(MoveJugs move: allPossibleMoves){
+	    	  tempPuzzle = this.copy();
+	          ((JugPuzzle)tempPuzzle).move(move.from, move.to);
+	          states.add(tempPuzzle, move);
+	      }
+	  }
+
+
+	/**
+	 * Store a copy of the current puzzle into a temporary puzzle (placeHolder).
+	 * Return placeHolder; the copy of the current puzzle.
+	 * @return	A copy of the current puzzle (placeHolder).
+	 */
+	public Puzzle copy() {
+		Puzzle placeHolder = new JugPuzzle();
+		((JugPuzzle) placeHolder).firstJug.setCurrentAmount(this.firstJug.getCurrentAmount());
+		((JugPuzzle) placeHolder).secondJug.setCurrentAmount (this.secondJug.getCurrentAmount());
+		((JugPuzzle) placeHolder).thirdJug.setCurrentAmount (this.thirdJug.getCurrentAmount());
+
+		return placeHolder;
+	}
+
+
+    /**
+     * Return the total number of moves made to solve the Jug puzzle.
+     * @return	Total number of moves.
+     */
+	public int getMoves() {
+		return movesCounter;
+
+	}
+
+
+    /**
+     * Get the initial Jug in which we will remove water from and the destination Jug in which we will add water to.
+     * Make the appropriate move by moving the correct amount water from initial Jug to the destination jug.
+     * @param initial 		the initial Jug in which water will be removed from.
+     * @param destination   the destination Jug in which water will be added to.
+     */
+	public void move(int initial, int destination) {
+		movesCounter ++;
+
+		if (initial != destination) {
+			while (storedJugs[initial].getCurrentAmount() != 0 && storedJugs[destination].getCurrentAmount() != storedJugs[destination].getJugCapacity()) {
+					storedJugs[destination].addAmount();
+					storedJugs[initial].removeAmount();
+
+			}
+		}
+	}
+
+
+	  /**
+     * Game only ends when both the first and second jugs have a total amount of 4 in each Jug.
+     * If both the first and second jugs have a total amount of 4 in each Jug return True else return False.
+     * @return	True if puzzle solved, else False.
+     */
+	public boolean isPuzzleSolved() {
+		if (firstJug.getCurrentAmount() == 4 && secondJug.getCurrentAmount() == 4) {
+			return true;
+		}
+		else {
+			return false;
+		}
+
+	}
+
+
+	  /**
+     * Return a string representation the total number of moves made and the total amount of water in each Jug.
+     * @return	String representation of number of moves and jugs.
+     */
+	public String toString() {
+		return movesCounter + " " + firstJug.toString() + " " + secondJug.toString() + " " + thirdJug.toString();
+	}
+
+
+}
